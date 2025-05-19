@@ -10,10 +10,21 @@
 # default for csharp files.
 # Note: This is only used by command line
 ###############################################################################
+# Unity files should generally use LF for consistency across platforms
 *.cs text eol=lf
 *.cs.meta text eol=lf
-*.unity text eol=lf
+*.anim text eol=lf
+*.asset text eol=lf
 *.prefab text eol=lf
+*.unity text eol=lf
+*.meta text eol=lf
+*.uss text eol=lf
+*.uxml text eol=lf
+*.shader text eol=lf
+*.cginc text eol=lf
+*.txt text eol=lf
+*.json text eol=lf
+*.md text eol=lf
 ###############################################################################
 # Set the merge driver for project and solution files
 #
@@ -36,6 +47,11 @@
 #*.modelproj merge=binary
 #*.sqlproj   merge=binary
 #*.wwaproj   merge=binary
+# Binary files should not have line ending conversion
+*.png binary
+*.jpg binary
+*.wav binary
+*.fbx binar
 
 ###############################################################################
 # behavior for image files
