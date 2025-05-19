@@ -138,10 +138,22 @@ public class PlayerAnimationController : MonoBehaviour
 
         if (isChopping && currentTree != null && isHoldingItem)
         {
-            currentTree.StartChopping();
-            animator.SetBool("IsUsingAxe", isChopping);
-            handsAnimator.SetBool("IsUsingAxe", isChopping);
-            axeAnimator.SetBool("IsUsingAxe", isChopping);
+            PlayerSkills playerSkills = FindFirstObjectByType<PlayerSkills>();
+            if (playerSkills != null)
+            {
+                if (playerSkills.GetSkillLevel("Woodcutting") >= currentTree.treeData.requiredLevel)
+                {
+                    currentTree.StartChopping();
+                    animator.SetBool("IsUsingAxe", isChopping);
+                    handsAnimator.SetBool("IsUsingAxe", isChopping);
+                    axeAnimator.SetBool("IsUsingAxe", isChopping);
+                }
+                else
+                {
+                    currentTree.NotifyTreeChopDenied();
+                }
+            }
+      
         }
 
         // Open the bank UI with 'B' key from anywhere

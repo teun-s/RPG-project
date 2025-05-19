@@ -1,4 +1,5 @@
 using System;
+using System.Xml.Linq;
 using UnityEngine;
 
 public class TreeResource : MonoBehaviour
@@ -18,6 +19,7 @@ public class TreeResource : MonoBehaviour
     private BoxCollider2D collider;
 
     public event Action onTreeDepleted;
+    public event Action onTreeChopDenied;
     [SerializeField] private Item fruitLogItem;
     private PlayerSkills playerSkills;
     private PlayerAnimationController playerController;
@@ -53,6 +55,24 @@ public class TreeResource : MonoBehaviour
         {
             audioSource.clip = treeData.chopSound;
         }
+
+        onTreeChopDenied += HandleOnTreeChopDenied;
+    }
+
+    public void NotifyTreeChopDenied()
+    {
+        onTreeChopDenied?.Invoke();
+    }
+
+    private void OnDisable()
+    {
+        onTreeChopDenied -= HandleOnTreeChopDenied;
+    }
+
+    private void HandleOnTreeChopDenied()
+    {
+       var ChopDeniedEffect =  CreateFloatPrefab();
+       ChopDeniedEffect.GetComponent<FloatingEffect>().SetText("Tree requires a higher skill level", Color.red);
     }
 
     void Update()
@@ -126,10 +146,7 @@ public class TreeResource : MonoBehaviour
 
                     if (floatingEffectPrefab != null && foliage != null)
                     {
-                        Vector3 foliageTop = foliage.transform.position;
-                        float foliageHeight = foliage.bounds.size.y;
-                        Vector3 effectPosition = foliageTop + new Vector3(0, foliageHeight * 0.5f + 0.5f, 0);
-                        GameObject expEffect = Instantiate(floatingEffectPrefab, effectPosition, Quaternion.identity);
+                        GameObject expEffect = CreateFloatPrefab();
                         string expText = "+" + (treeData.expPerLog * logsGained) + " EXP";
                         if (isCritical)
                         {
@@ -166,6 +183,15 @@ public class TreeResource : MonoBehaviour
                 }
             }
         }
+    }
+
+    private GameObject CreateFloatPrefab()
+    {
+        Vector3 foliageTop = foliage.transform.position;
+        float foliageHeight = foliage.bounds.size.y;
+        Vector3 effectPosition = foliageTop + new Vector3(0, foliageHeight * 0.5f + 0.5f, 0);
+        GameObject floatingPrefabEffect = Instantiate(floatingEffectPrefab, effectPosition, Quaternion.identity);
+        return floatingPrefabEffect;
     }
 
     public void StartChopping()
