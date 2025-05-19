@@ -125,7 +125,7 @@ public class TreeResource : MonoBehaviour
                         else
                         {
                             expEffect.GetComponent<FloatingEffect>().SetText(expText, Color.green);
-                        }/
+                        }//
                     }
 
                     if (woodAmount <= 0)
