@@ -42,7 +42,6 @@ public class PlayerSkills : MonoBehaviour
     void Start()
     {
 
-        PlayerPrefs.DeleteAll();
         // Load skill progress from PlayerPrefs
         LoadSkillProgress();
         inventoryManager = FindFirstObjectByType<InventoryManager>();

@@ -1,4 +1,6 @@
+using System;
 using System.Diagnostics.CodeAnalysis;
+using JetBrains.Annotations;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -22,6 +24,7 @@ public class PlayerAnimationController : MonoBehaviour
     private AxeType currentAxeType = AxeType.Iron;
     private bool isHoldingItem = false;
     private bool isChopping = false;
+    public event Action StopAxeAnim;
     private GatherableResource currentGatherable; // Track the nearest gatherable resource
 
     void Start()
@@ -37,6 +40,7 @@ public class PlayerAnimationController : MonoBehaviour
         {
             Debug.LogError("BankUI not assigned in PlayerAnimationController!");
         }
+
     }
 
     void Update()
@@ -123,23 +127,21 @@ public class PlayerAnimationController : MonoBehaviour
         handsAnimator.SetBool("IsHoldingItem", isHoldingItem);
         axeAnimator.SetBool("IsHoldingItem", isHoldingItem);
 
-        bool isUsingAxe = Keyboard.current.nKey.isPressed;
-        animator.SetBool("IsUsingAxe", isUsingAxe);
-        handsAnimator.SetBool("IsUsingAxe", isUsingAxe);
-        axeAnimator.SetBool("IsUsingAxe", isUsingAxe);
+        //bool isUsingAxe = Keyboard.current.nKey.isPressed;
+        isChopping = Keyboard.current.nKey.wasPressedThisFrame;
+        
 
         if (axeRenderer != null)
         {
             axeRenderer.enabled = isHoldingItem;
         }
 
-        if (isUsingAxe && currentTree != null && isHoldingItem)
+        if (isChopping && currentTree != null && isHoldingItem)
         {
             currentTree.StartChopping();
-        }
-        else if (currentTree != null)
-        {
-            currentTree.StopChopping();
+            animator.SetBool("IsUsingAxe", isChopping);
+            handsAnimator.SetBool("IsUsingAxe", isChopping);
+            axeAnimator.SetBool("IsUsingAxe", isChopping);
         }
 
         // Open the bank UI with 'B' key from anywhere
@@ -172,22 +174,6 @@ public class PlayerAnimationController : MonoBehaviour
             Debug.LogError("B key pressed, but bankUI is null!");
         }
 
-        // Toggle chopping with 'N' key
-        if (Keyboard.current.nKey.wasPressedThisFrame)
-        {
-            isChopping = !isChopping;
-            if (currentTree != null)
-            {
-                if (isChopping)
-                {
-                    currentTree.StartChopping();
-                }
-                else
-                {
-                    currentTree.StopChopping();
-                }
-            }
-        }
 
         if (Keyboard.current.digit1Key.wasPressedThisFrame)
         {
@@ -207,12 +193,19 @@ public class PlayerAnimationController : MonoBehaviour
     }
 
 
+    public void onTreeDepletedHandler()
+    {
+        animator.SetBool("IsUsingAxe", isChopping);
+        handsAnimator.SetBool("IsUsingAxe", isChopping);
+        axeAnimator.SetBool("IsUsingAxe", isChopping);
+    }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Tree"))
         {
             currentTree = other.GetComponent<TreeResource>();
+            currentTree.onTreeDepleted += onTreeDepletedHandler;
             Debug.Log("Entered tree trigger area.");
         }
         if (other.CompareTag("Bank"))
@@ -234,6 +227,7 @@ public class PlayerAnimationController : MonoBehaviour
             if (currentTree != null)
             {
                 currentTree.StopChopping();
+                currentTree.onTreeDepleted -= onTreeDepletedHandler;
                 currentTree = null;
                 Debug.Log("Exited tree trigger area.");
             }

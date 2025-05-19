@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class TreeResource : MonoBehaviour
@@ -16,6 +17,7 @@ public class TreeResource : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private BoxCollider2D collider;
 
+    public event Action onTreeDepleted;
     [SerializeField] private Item fruitLogItem;
     private PlayerSkills playerSkills;
     private PlayerAnimationController playerController;
@@ -27,7 +29,7 @@ public class TreeResource : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player");
         spriteRenderer = GetComponent<SpriteRenderer>();
         collider = GetComponent<BoxCollider2D>();
-        woodAmount = Random.Range(treeData.minWoodAmount, treeData.maxWoodAmount + 1);
+        woodAmount = UnityEngine.Random.Range(treeData.minWoodAmount, treeData.maxWoodAmount + 1);
 
         playerSkills = player.GetComponent<PlayerSkills>();
         if (playerSkills == null)
@@ -104,9 +106,9 @@ public class TreeResource : MonoBehaviour
 
                 Debug.Log($"Clamped Success Rate: {successRate}, Critical Chance: {treeData.criticalChance}");
 
-                if (Random.value <= successRate)
+                if (UnityEngine.Random.value <= successRate)
                 {
-                    bool isCritical = Random.value <= treeData.criticalChance;
+                    bool isCritical = UnityEngine.Random.value <= treeData.criticalChance;
                     int logsGained = isCritical ? 2 : 1;
                     Debug.Log($"Chop Attempt - Success: True, Critical: {isCritical}, Logs Gained: {logsGained}");
                     woodAmount--;
@@ -153,6 +155,7 @@ public class TreeResource : MonoBehaviour
                         }
                         collider.enabled = false;
                         isBeingChopped = false;
+                        onTreeDepleted?.Invoke();
                         Invoke("RespawnTree", respawnDelay);
                     }
                 }
@@ -194,11 +197,12 @@ public class TreeResource : MonoBehaviour
     {
         isBeingChopped = false;
         chopTimer = 0f;
+        onTreeDepleted?.Invoke();
     }
 
     private void RespawnTree()
     {
-        woodAmount = Random.Range(treeData.minWoodAmount, treeData.maxWoodAmount + 1);
+        woodAmount = UnityEngine.Random.Range(treeData.minWoodAmount, treeData.maxWoodAmount + 1);
         foliage.enabled = true;
         collider.enabled = true;
         Debug.Log("Tree respawned");
