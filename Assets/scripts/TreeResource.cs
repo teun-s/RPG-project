@@ -18,8 +18,9 @@ public class TreeResource : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private BoxCollider2D collider;
 
+    public delegate void TreeChopDeniedEvent(int requiredlevel);
     public event Action onTreeDepleted;
-    public event Action onTreeChopDenied;
+    public event TreeChopDeniedEvent onTreeChopDenied;
     [SerializeField] private Item fruitLogItem;
     private PlayerSkills playerSkills;
     private PlayerAnimationController playerController;
@@ -61,7 +62,7 @@ public class TreeResource : MonoBehaviour
 
     public void NotifyTreeChopDenied()
     {
-        onTreeChopDenied?.Invoke();
+        onTreeChopDenied?.Invoke(treeData.requiredLevel);
     }
 
     private void OnDisable()
@@ -69,10 +70,10 @@ public class TreeResource : MonoBehaviour
         onTreeChopDenied -= HandleOnTreeChopDenied;
     }
 
-    private void HandleOnTreeChopDenied()
+    private void HandleOnTreeChopDenied(int requirelevel)
     {
        var ChopDeniedEffect =  CreateFloatPrefab();
-       ChopDeniedEffect.GetComponent<FloatingEffect>().SetText("Tree requires a higher skill level", Color.red);
+       ChopDeniedEffect.GetComponent<FloatingEffect>().SetText($"Tree requires Woodcutting lvl {requirelevel}", Color.red);
     }
 
     void Update()
@@ -83,6 +84,7 @@ public class TreeResource : MonoBehaviour
             if (inventoryManager != null && inventoryManager.IsInventoryFull())
             {
                 Debug.Log("Cannot chop tree: Inventory is full!");
+                UIEventManager.Instance.NotifyStopAxeAnim();
                 return; // Prevent chopping if inventory is full
             }
 
@@ -172,7 +174,7 @@ public class TreeResource : MonoBehaviour
                         }
                         collider.enabled = false;
                         isBeingChopped = false;
-                        onTreeDepleted?.Invoke();
+                        UIEventManager.Instance.NotifyStopAxeAnim();
                         Invoke("RespawnTree", respawnDelay);
                     }
                 }

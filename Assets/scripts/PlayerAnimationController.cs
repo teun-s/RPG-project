@@ -7,6 +7,8 @@ using UnityEngine.InputSystem;
 
 public class PlayerAnimationController : MonoBehaviour
 {
+
+    public event Action cancelAxeAnim;
     public Animator animator;
     public Animator handsAnimator;
     public Animator axeAnimator;
@@ -33,6 +35,7 @@ public class PlayerAnimationController : MonoBehaviour
         handsAnimator = transform.Find("Hands").GetComponent<Animator>();
         axeRenderer = transform.Find("Hands/Axe").GetComponent<SpriteRenderer>();
         axeAnimator = transform.Find("Hands/Axe").GetComponent<Animator>();
+
         UpdateAxeColor();
 
         // Check if bankUI is assigned
@@ -41,6 +44,12 @@ public class PlayerAnimationController : MonoBehaviour
             Debug.LogError("BankUI not assigned in PlayerAnimationController!");
         }
 
+        UIEventManager.Instance.OnStopAxeAnim += HandleStopAxeAnimationevent;
+    }
+
+    private void OnDisable()
+    {
+        UIEventManager.Instance.OnStopAxeAnim -= HandleStopAxeAnimationevent;
     }
 
     void Update()
@@ -204,12 +213,11 @@ public class PlayerAnimationController : MonoBehaviour
         }
     }
 
-
-    public void onTreeDepletedHandler()
+    public void HandleStopAxeAnimationevent()
     {
-        animator.SetBool("IsUsingAxe", isChopping);
-        handsAnimator.SetBool("IsUsingAxe", isChopping);
-        axeAnimator.SetBool("IsUsingAxe", isChopping);
+        animator.SetBool("IsUsingAxe", false);
+        handsAnimator.SetBool("IsUsingAxe", false);
+        axeAnimator.SetBool("IsUsingAxe", false);
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -217,7 +225,6 @@ public class PlayerAnimationController : MonoBehaviour
         if (other.CompareTag("Tree"))
         {
             currentTree = other.GetComponent<TreeResource>();
-            currentTree.onTreeDepleted += onTreeDepletedHandler;
             Debug.Log("Entered tree trigger area.");
         }
         if (other.CompareTag("Bank"))
@@ -239,8 +246,8 @@ public class PlayerAnimationController : MonoBehaviour
             if (currentTree != null)
             {
                 currentTree.StopChopping();
-                currentTree.onTreeDepleted -= onTreeDepletedHandler;
                 currentTree = null;
+                HandleStopAxeAnimationevent();
                 Debug.Log("Exited tree trigger area.");
             }
         }

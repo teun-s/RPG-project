@@ -8,6 +8,7 @@ public class UIEventManager : MonoBehaviour
     public event Action OnUIClosed;       // Fired when the UI is closed
     public event Action OnBankOpened;
     public event Action OnBankClosed;
+    public event Action OnStopAxeAnim;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -22,6 +23,11 @@ public class UIEventManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    public void NotifyStopAxeAnim()
+    {
+        OnStopAxeAnim();
     }
 
     public void NotifyBankOpened()
