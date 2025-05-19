@@ -10,8 +10,10 @@
 # default for csharp files.
 # Note: This is only used by command line
 ###############################################################################
-#*.cs     diff=csharp
-
+*.cs text eol=lf
+*.cs.meta text eol=lf
+*.unity text eol=lf
+*.prefab text eol=lf
 ###############################################################################
 # Set the merge driver for project and solution files
 #
