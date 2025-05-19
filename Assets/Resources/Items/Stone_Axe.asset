@@ -18,5 +18,5 @@ MonoBehaviour:
   canStack: 0
   toolStats:
   - skill: 0
-    chopTimeMultiplier: 0.5
-    successRateBonus: 0.1
+    chopTimeMultiplier: 1
+    successRateBonus: 0

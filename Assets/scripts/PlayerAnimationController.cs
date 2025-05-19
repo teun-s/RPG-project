@@ -21,6 +21,7 @@ public class PlayerAnimationController : MonoBehaviour
     public enum AxeType { Iron, Steel, Bronze }
     private AxeType currentAxeType = AxeType.Iron;
     private bool isHoldingItem = false;
+    private bool isChopping = false;
     private GatherableResource currentGatherable; // Track the nearest gatherable resource
 
     void Start()
@@ -169,6 +170,23 @@ public class PlayerAnimationController : MonoBehaviour
         else if (Keyboard.current.bKey.wasPressedThisFrame && bankUI == null)
         {
             Debug.LogError("B key pressed, but bankUI is null!");
+        }
+
+        // Toggle chopping with 'N' key
+        if (Keyboard.current.nKey.wasPressedThisFrame)
+        {
+            isChopping = !isChopping;
+            if (currentTree != null)
+            {
+                if (isChopping)
+                {
+                    currentTree.StartChopping();
+                }
+                else
+                {
+                    currentTree.StopChopping();
+                }
+            }
         }
 
         if (Keyboard.current.digit1Key.wasPressedThisFrame)

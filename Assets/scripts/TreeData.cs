@@ -11,5 +11,6 @@ public class TreeData : ScriptableObject
     public int maxWoodAmount = 6;
     public float chopTime = 1f;
     public int requiredLevel;
+    public AudioClip chopSound; // Sound to play when chopping
 
 }

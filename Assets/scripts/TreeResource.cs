@@ -20,6 +20,7 @@ public class TreeResource : MonoBehaviour
     private PlayerSkills playerSkills;
     private PlayerAnimationController playerController;
     private InventoryManager inventoryManager;
+    private AudioSource audioSource;
 
     void Start()
     {
@@ -44,6 +45,12 @@ public class TreeResource : MonoBehaviour
         {
             Debug.LogError("InventoryManager not found in the scene!");
         }
+        // Initialize AudioSource
+        audioSource = GetComponent<AudioSource>();
+        if (treeData.chopSound != null && audioSource != null)
+        {
+            audioSource.clip = treeData.chopSound;
+        }
     }
 
     void Update()
@@ -61,6 +68,11 @@ public class TreeResource : MonoBehaviour
             if (chopTimer >= effectiveChopTime)
             {
                 chopTimer = 0f;
+                // Play chop sound
+                if (audioSource != null && audioSource.clip != null)
+                {
+                    audioSource.Play();
+                }
                 float successRate = treeData.baseSuccessRate;
                 float chopTimeMultiplier = 1f; // Default value
                 float successRateBonus = 0f;   // Default value

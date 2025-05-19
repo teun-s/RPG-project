@@ -19,3 +19,5 @@ MonoBehaviour:
   minWoodAmount: 5
   maxWoodAmount: 7
   chopTime: 1
+  requiredLevel: 0
+  chopSound: {fileID: 8300000, guid: 05e6308ebd147ef47b9bc1baaa59fe28, type: 3}
