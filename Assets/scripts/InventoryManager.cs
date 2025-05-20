@@ -11,9 +11,24 @@ public class InventoryManager : MonoBehaviour
     [SerializeField] private float warningFadeDuration = 1f;
     [SerializeField] private BankManager bankManager;
     [SerializeField] private BankUI bankUI;
-    [SerializeField] public EquipmentPanelManager equipmentPanelManager;
-
+    public static InventoryManager Instance { get; private set; }
     private Coroutine warningFadeCoroutine;
+
+    void Awake()
+    {
+        // If no instance exists, set this as the instance
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject); // Optional: Keeps the instance across scenes
+        }
+        else
+        {
+            // If another instance already exists, destroy this one
+            Destroy(gameObject);
+        }
+    }
+
 
     void Start()
     {
@@ -114,6 +129,12 @@ public class InventoryManager : MonoBehaviour
         warningFadeCoroutine = null;
     }
 
+    public void EquipItem(UISlotHandler slot)
+    {
+        EquipmentManager.Instance.EquipItem(slot.item);
+        ClearItemSlot(slot);
+    }
+
     public void StackInInventory(UISlotHandler currentSlot, Item item)
     {
         if (!currentSlot.item.canStack || !item.canStack)
@@ -131,24 +152,6 @@ public class InventoryManager : MonoBehaviour
         currentSlot.icon.sprite = item.itemIcon;
         currentSlot.itemCountText.text = item.itemCount.ToString();
         currentSlot.icon.gameObject.SetActive(true);
-    }
-
-
-    public void EquipItem(UISlotHandler slot)
-    {
-        if (equipmentPanelManager == null)
-        {
-            Debug.LogError("equipmentPanelManager is null while trying to equip item.");
-            return;
-        }
-        if (slot.item != null)
-        {
-            Debug.Log($"Equipping item ID {slot.item.itemID}");
-            if (equipmentPanelManager.EquipItem(slot.item))
-            {
-                ClearItemSlot(slot);
-            }
-        }
     }
 
     public void DepositItemToBank(UISlotHandler slot)
