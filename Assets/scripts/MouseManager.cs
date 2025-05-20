@@ -44,6 +44,12 @@ public class MouseManager : MonoBehaviour
             return;
         }
 
+        if (currentActiveItem != null && currentlyHeldItem == null && currentActiveItem.equipmentType != EquipmentType.None && !bankUI.IsOpen())
+        {
+            currentSlot.inventoryManager.EquipItem(currentSlot);
+            return;
+        }
+
         if (currentSlot.item != null)
         {
             currentSlot.inventoryManager.ClearItemSlot(currentSlot);

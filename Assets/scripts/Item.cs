@@ -2,6 +2,25 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 
+
+
+public enum EquipmentType
+{
+    None,
+    Head,
+    Chest,
+    Boot,
+    Weapon
+}
+
+public enum ToolType
+{
+    None,
+    Axe,
+    Sword,
+    Pickaxe
+}
+
 [CreateAssetMenu(fileName ="Item",menuName="ScriptableObjects/Item")]
 public class Item : ScriptableObject
 {
@@ -9,6 +28,8 @@ public class Item : ScriptableObject
     public int itemCount;
     public Sprite itemIcon;
     public bool canStack = false;
+    public ToolType toolType;
+    public EquipmentType equipmentType;
     public List<ToolStats> toolStats;
 }
 

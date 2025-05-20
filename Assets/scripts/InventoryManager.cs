@@ -11,6 +11,7 @@ public class InventoryManager : MonoBehaviour
     [SerializeField] private float warningFadeDuration = 1f;
     [SerializeField] private BankManager bankManager;
     [SerializeField] private BankUI bankUI;
+    [SerializeField] public EquipmentPanelManager equipmentPanelManager;
 
     private Coroutine warningFadeCoroutine;
 
@@ -130,6 +131,24 @@ public class InventoryManager : MonoBehaviour
         currentSlot.icon.sprite = item.itemIcon;
         currentSlot.itemCountText.text = item.itemCount.ToString();
         currentSlot.icon.gameObject.SetActive(true);
+    }
+
+
+    public void EquipItem(UISlotHandler slot)
+    {
+        if (equipmentPanelManager == null)
+        {
+            Debug.LogError("equipmentPanelManager is null while trying to equip item.");
+            return;
+        }
+        if (slot.item != null)
+        {
+            Debug.Log($"Equipping item ID {slot.item.itemID}");
+            if (equipmentPanelManager.EquipItem(slot.item))
+            {
+                ClearItemSlot(slot);
+            }
+        }
     }
 
     public void DepositItemToBank(UISlotHandler slot)

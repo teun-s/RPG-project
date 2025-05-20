@@ -8,6 +8,10 @@ TagManager:
   - Bank
   - Foliage
   - Gatherable
+  - weapon
+  - head
+  - chest
+  - boot
   layers:
   - Default
   - TransparentFX

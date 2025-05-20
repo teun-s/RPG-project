@@ -16,6 +16,8 @@ MonoBehaviour:
   itemCount: 1
   itemIcon: {fileID: -6305548594305476506, guid: 8d82908476280464e9de7e848d9fe781, type: 3}
   canStack: 0
+  toolType: 1
+  equipmentType: 4
   toolStats:
   - skill: 0
     chopTimeMultiplier: 1
